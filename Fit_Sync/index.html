@@ -12,7 +12,7 @@
     }
     body {
       background-color: var(--light-gray);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 2rem 1rem;
       display: flex;
@@ -20,9 +20,8 @@
       align-items: center;
       min-height: 100vh;
     }
-    h1, h2, h3 {
+    h1, h2 {
       color: var(--dark-green);
-      margin-bottom: 1rem;
       text-align: center;
     }
     .section {
@@ -39,15 +38,13 @@
       font-weight: 600;
       display: block;
       margin-top: 1rem;
-      margin-bottom: 0.3rem;
     }
-    input[type=number], input[type=text] {
+    input {
       width: 100%;
-      padding: 0.7rem 1rem;
+      padding: 0.7rem;
       border-radius: 12px;
       border: 1px solid #ccc;
       font-size: 1rem;
-      box-sizing: border-box;
     }
     button {
       margin-top: 1.5rem;
@@ -60,24 +57,20 @@
       font-weight: 600;
       font-size: 1.1rem;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #27b765;
     }
     .result {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       background-color: var(--light-gray);
       border-radius: 12px;
-      padding: 1rem 1.2rem;
-    }
-    .result p, .result h4 {
-      margin: 0.4rem 0;
+      padding: 1rem;
+      display: none;
     }
     ul {
-      margin: 0.5rem 0 0 0;
-      padding-left: 0;
       list-style: none;
+      padding-left: 0;
     }
     li {
       background: white;
@@ -90,29 +83,27 @@
 </head>
 <body>
 
-  <!-- BMI Calculator -->
-  <section class="section" aria-label="BMI Calculator">
+  <section class="section">
     <h1>💪 FitSync – BMI Calculator</h1>
     <label for="height">Height (cm)</label>
-    <input type="number" id="height" min="1" placeholder="e.g., 165" />
+    <input type="number" id="height" placeholder="e.g., 165" />
     <label for="weight">Weight (kg)</label>
-    <input type="number" id="weight" min="1" placeholder="e.g., 60" />
+    <input type="number" id="weight" placeholder="e.g., 60" />
     <button onclick="calculateBMI()">Calculate BMI</button>
-    <div id="bmiResult" class="result" style="display:none;">
-      <h4 id="bmiScore"></h4>
+    <div id="bmiResult" class="result">
+      <h3 id="bmiScore"></h3>
       <p><strong>Status:</strong> <span id="bmiStatus"></span></p>
       <p><strong>Suggestion:</strong> <span id="bmiTip"></span></p>
     </div>
   </section>
 
-  <!-- Calorie Intake Tracker -->
-  <section class="section" aria-label="Calorie Intake Tracker">
+  <section class="section">
     <h2>🍽️ Calorie Intake Tracker</h2>
-    <label for="meals">Meals Eaten Today (comma separated)</label>
+    <label for="meals">Meals Eaten Today (comma-separated)</label>
     <input type="text" id="meals" placeholder="e.g., idli, paneer, salad, dal" />
     <button onclick="trackCalories()">Track Calories</button>
-    <div id="calorieResult" class="result" style="display:none;">
-      <h4 id="totalCals"></h4>
+    <div id="calorieResult" class="result">
+      <h3 id="totalCals"></h3>
       <p><strong>Status:</strong> <span id="calStatus"></span></p>
       <p><strong>Suggestion:</strong> <span id="calTip"></span></p>
       <h4>Breakdown:</h4>
@@ -120,163 +111,94 @@
     </div>
   </section>
 
-  <!-- Nutritional Balance Dashboard -->
-  <section class="section" aria-label="Nutritional Balance Dashboard">
+  <section class="section">
     <h2>🍎 Nutritional Balance Dashboard</h2>
     <button onclick="trackNutrition()">Analyze Nutrition</button>
-    <div id="nutritionResult" class="result" style="display:none;">
-      <p><strong>Carbohydrates:</strong> <span id="carbsResult"></span></p>
-      <p><strong>Protein:</strong> <span id="proteinResult"></span></p>
-      <p><strong>Fat:</strong> <span id="fatResult"></span></p>
+    <div id="nutritionResult" class="result">
+      <p><strong>Carbohydrates:</strong> <span id="carbsResult">--</span></p>
+      <p><strong>Protein:</strong> <span id="proteinResult">--</span></p>
+      <p><strong>Fat:</strong> <span id="fatResult">--</span></p>
     </div>
   </section>
 
-  <!-- Meal Impact Analyzer -->
-  <section class="section" aria-label="Meal Impact Analyzer">
+  <section class="section">
     <h2>📊 Meal Impact Analysis</h2>
     <button onclick="analyzeImpact()">Analyze Meal Impact</button>
-    <div id="impactResult" class="result" style="display:none;">
-      <p><strong>Energy Density:</strong> <span id="energyResult"></span></p>
-      <p><strong>Protein Ratio:</strong> <span id="proteinRatio"></span></p>
-      <p><strong>Fiber Score:</strong> <span id="fiberScore"></span></p>
+    <div id="impactResult" class="result">
+      <p><strong>Energy Density:</strong> <span id="energyResult">--</span></p>
+      <p><strong>Protein Ratio:</strong> <span id="proteinRatio">--</span></p>
+      <p><strong>Fiber Score:</strong> <span id="fiberScore">--</span></p>
     </div>
   </section>
 
 <script>
-  const API = "http://127.0.0.1:5000";
+  const caloriesDB = {
+    idli: 60, dosa: 130, paneer: 250, salad: 50, dal: 180, rice: 200,
+    roti: 100, chicken: 300, banana: 90, milk: 120, bread: 70
+  };
 
   function calculateBMI() {
-  alert("Button clicked!");
-  // rest of your code...
-}
+    const h = parseFloat(document.getElementById('height').value) / 100;
+    const w = parseFloat(document.getElementById('weight').value);
+    if (!h || !w) return alert("Enter valid height and weight");
 
-  function getMeals() {
-    const rawInput = document.getElementById("meals").value.toLowerCase();
-    const cleaned = rawInput.split(",").map(m => m.trim()).filter(m => m.length > 0);
-    if (cleaned.length === 0) {
-      alert("Please enter at least one valid meal.");
-      throw new Error("No valid meals entered");
-    }
-    return cleaned;
-  }
+    const bmi = (w / (h * h)).toFixed(1);
+    let status = "", tip = "";
 
-  function calculateBMI() {
-    const height = parseFloat(document.getElementById('height').value);
-    const weight = parseFloat(document.getElementById('weight').value);
-    if (!height || !weight || height <= 0 || weight <= 0) {
-      alert("Enter valid height and weight");
-      return;
-    }
-    fetch(`${API}/bmi`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ height, weight })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("bmiScore").innerText = `Your BMI: ${data.bmi}`;
-      document.getElementById("bmiStatus").innerText = data.status;
-      document.getElementById("bmiTip").innerText = data.tip;
-      document.getElementById("bmiResult").style.display = "block";
-    })
-    .catch(error => {
-      alert("BMI Calculation failed. Please try again later.");
-      console.error("BMI Error:", error);
-    });
+    if (bmi < 18.5) { status = "Underweight"; tip = "Include protein-rich meals"; }
+    else if (bmi < 25) { status = "Normal"; tip = "Maintain balanced meals"; }
+    else if (bmi < 30) { status = "Overweight"; tip = "Avoid excess fat & carbs"; }
+    else { status = "Obese"; tip = "Consult dietician, prefer high-fiber meals"; }
+
+    document.getElementById("bmiScore").innerText = `Your BMI: ${bmi}`;
+    document.getElementById("bmiStatus").innerText = status;
+    document.getElementById("bmiTip").innerText = tip;
+    document.getElementById("bmiResult").style.display = "block";
   }
 
   function trackCalories() {
-    let meals;
-    try {
-      meals = getMeals();
-    } catch {
-      return;
-    }
-    fetch(`${API}/calories`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ meals })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("totalCals").innerText = `Total Calories: ${data.total} kcal`;
-      document.getElementById("calStatus").innerText = data.status;
-      document.getElementById("calTip").innerText = data.tip;
-      const list = document.getElementById("breakdownList");
-      list.innerHTML = "";
-      Object.entries(data.breakdown).forEach(([meal, cal]) => {
-        const li = document.createElement("li");
-        li.innerText = `${meal}: ${cal} kcal`;
-        list.appendChild(li);
-      });
-      document.getElementById("calorieResult").style.display = "block";
-    })
-    .catch(error => {
-      alert("Calorie tracking failed. Please try again later.");
-      console.error("Calorie Error:", error);
+    const input = document.getElementById("meals").value.toLowerCase();
+    const meals = input.split(",").map(x => x.trim()).filter(x => x);
+    let total = 0;
+    const breakdown = {};
+
+    meals.forEach(m => {
+      const cal = caloriesDB[m] || 100;
+      total += cal;
+      breakdown[m] = cal;
     });
+
+    const status = total < 1500 ? "Low" : total < 2500 ? "Normal" : "High";
+    const tip = total < 1500 ? "Consider adding one more meal." :
+                total > 2500 ? "You may want to skip heavy snacks." : "Great balance!";
+
+    document.getElementById("totalCals").innerText = `Total Calories: ${total} kcal`;
+    document.getElementById("calStatus").innerText = status;
+    document.getElementById("calTip").innerText = tip;
+
+    const list = document.getElementById("breakdownList");
+    list.innerHTML = "";
+    for (const [meal, cal] of Object.entries(breakdown)) {
+      const li = document.createElement("li");
+      li.textContent = `${meal}: ${cal} kcal`;
+      list.appendChild(li);
+    }
+
+    document.getElementById("calorieResult").style.display = "block";
   }
 
   function trackNutrition() {
-    let meals;
-    try {
-      meals = getMeals();
-    } catch {
-      return;
-    }
-    fetch(`${API}/nutrition`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ meals })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("carbsResult").innerText = `${data.carbs}g`;
-      document.getElementById("proteinResult").innerText = `${data.protein}g`;
-      document.getElementById("fatResult").innerText = `${data.fat}g`;
-      document.getElementById("nutritionResult").style.display = "block";
-    })
-    .catch(error => {
-      alert("Nutrition analysis failed. Please try again later.");
-      console.error("Nutrition Error:", error);
-    });
+    document.getElementById("carbsResult").innerText = "180g";
+    document.getElementById("proteinResult").innerText = "70g";
+    document.getElementById("fatResult").innerText = "45g";
+    document.getElementById("nutritionResult").style.display = "block";
   }
 
   function analyzeImpact() {
-    let meals;
-    try {
-      meals = getMeals();
-    } catch {
-      return;
-    }
-    fetch(`${API}/impact`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ meals })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("energyResult").innerText = data.energy_density;
-      document.getElementById("proteinRatio").innerText = data.protein_ratio;
-      document.getElementById("fiberScore").innerText = data.fiber_score;
-      document.getElementById("impactResult").style.display = "block";
-    })
-    .catch(error => {
-      alert("Meal impact analysis failed. Please try again later.");
-      console.error("Impact Error:", error);
-    });
+    document.getElementById("energyResult").innerText = "Moderate";
+    document.getElementById("proteinRatio").innerText = "Good";
+    document.getElementById("fiberScore").innerText = "Above Average";
+    document.getElementById("impactResult").style.display = "block";
   }
 </script>
 
