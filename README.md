@@ -133,8 +133,7 @@ Our team is building 3 backend-supported AI modules to extend MVP:
 
 ## 👩‍💻 Built by
 
-**Sneha Singh**  
-B.Tech CSE (1st Year) | Code for Bharat Season 2 Participant  
+**Sneha Singh**   
 GitHub: [@techie-013](https://github.com/techie-013)
 
 ---
