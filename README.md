@@ -118,6 +118,7 @@ Our team is building 3 backend-supported AI modules to extend MVP:
 3. **Food Waste Pattern Identifier** – Analyze leftover food trends and optimize future stock  
 
 > These models are Python-based and will be deployed with Flask APIs.
+> Demo Of the model which is still under progress is shown in the pdf attached
 
 ---
 
