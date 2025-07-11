@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mess Master AI – Smart Meal Suggestion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --dark-green: #3A5A40;
+      --bright-green: #2ECC71;
+      --light-gray: #E3E9E5;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--light-gray);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: var(--dark-green);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--dark-green);
+      margin-top: 1rem;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: var(--bright-green);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #27b765;
+    }
+
+    .results {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 12px;
+      background-color: var(--light-gray);
+    }
+
+    .results h2 {
+      color: var(--dark-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .results ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .results li {
+      background-color: white;
+      padding: 0.7rem;
+      border: 1px solid var(--dark-green);
+      border-radius: 10px;
+      margin-bottom: 0.6rem;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Smart Meal Suggestion 🍽️</h1>
+
+    <label for="allergy">Allergies (comma-separated)</label>
+    <input type="text" id="allergy" placeholder="e.g., lactose, peanuts" />
+
+    <label for="symptoms">Symptoms</label>
+    <input type="text" id="symptoms" placeholder="e.g., acidity, fatigue" />
+
+    <label for="history">Health History</label>
+    <input type="text" id="history" placeholder="e.g., diabetes, thyroid" />
+
+    <label for="deficiency">Deficiencies</label>
+    <input type="text" id="deficiency" placeholder="e.g., iron, calcium, B12" />
+
+    <button onclick="suggestMeals()">Suggest Meals</button>
+
+    <div class="results" id="resultBox" style="display:none;">
+      <h2>Recommended Meals:</h2>
+      <ul id="mealList"></ul>
+    </div>
+  </div>
+
+  <script>
+    const MEALS = [
+      { name: "Oats with almond milk & banana", tags: ["lactose-free", "iron", "fatigue", "thyroid", "b12"] },
+      { name: "Brown rice with tofu & broccoli", tags: ["diabetes", "calcium", "thyroid", "gluten-free"] },
+      { name: "Moong dal khichdi with ghee", tags: ["acidity", "iron", "b12", "easy-digest"] },
+      { name: "Roti with palak paneer", tags: ["iron", "calcium", "diabetes", "high-protein"] },
+      { name: "Boiled eggs with toast", tags: ["b12", "thyroid", "heart", "high-protein"] },
+      { name: "Fruit salad with chia seeds", tags: ["fiber", "fatigue", "acidity", "heart", "easy-digest"] }
+    ];
+
+    function suggestMeals() {
+      const allergyInput = document.getElementById('allergy').value.toLowerCase().split(',').map(tag => tag.trim());
+      const symptomInput = document.getElementById('symptoms').value.toLowerCase().split(',').map(tag => tag.trim());
+      const historyInput = document.getElementById('history').value.toLowerCase().split(',').map(tag => tag.trim());
+      const deficiencyInput = document.getElementById('deficiency').value.toLowerCase().split(',').map(tag => tag.trim());
+
+      const allInputs = [...allergyInput, ...symptomInput, ...historyInput, ...deficiencyInput].filter(Boolean);
+      const recommendations = MEALS.filter(meal =>
+        meal.tags.some(tag => allInputs.includes(tag))
+      );
+
+      const resultBox = document.getElementById('resultBox');
+      const mealList = document.getElementById('mealList');
+
+      mealList.innerHTML = "";
+
+      if (recommendations.length > 0) {
+        recommendations.forEach(meal => {
+          const li = document.createElement('li');
+          li.textContent = meal.name;
+          mealList.appendChild(li);
+        });
+      } else {
+        mealList.innerHTML = "<li>No suitable meal found. Try a different input or consult a dietician.</li>";
+      }
+
+      resultBox.style.display = "block";
+    }
+  </script>
+</body>
+</html>
