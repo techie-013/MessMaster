@@ -138,7 +138,7 @@ Our team is building 3 backend-supported AI modules to extend MVP:
    <img width="1236" height="696" alt="image" src="https://github.com/user-attachments/assets/b32b7908-9249-46b3-bd7f-b020482deb82" />
 
 
-> These models are Python-based and will be deployed with Flask APIs.
+
 > Demo Of the model which is still under progress is shown in the pdf attached
 
 ---
